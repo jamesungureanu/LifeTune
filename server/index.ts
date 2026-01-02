@@ -1,3 +1,10 @@
+console.log("DATABASE_URL exists:", Boolean(process.env.DATABASE_URL));
+console.log(
+  "DATABASE_URL preview:",
+  process.env.DATABASE_URL
+    ? process.env.DATABASE_URL.replace(/:.+@/, ":****@")
+    : "MISSING"
+);
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
