@@ -15,13 +15,23 @@ export async function registerRoutes(
       const session = await storage.createSession(input);
       res.status(201).json(session);
     } catch (err) {
-      res.status(400).json({ error: "Invalid data" });
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid request body" });
+      }
+
+      console.error("Create session failed:", err);
+      res.status(500).json({ error: "Failed to create session" });
     }
   });
 
-  app.get(api.sessions.list.path, async (req, res) => {
-    const sessions = await storage.getSessions();
-    res.json(sessions);
+  app.get(api.sessions.list.path, async (_req, res) => {
+    try {
+      const sessions = await storage.getSessions();
+      res.json(sessions);
+    } catch (err) {
+      console.error("List sessions failed:", err);
+      res.status(500).json({ error: "Failed to fetch sessions" });
+    }
   });
 
   return httpServer;
