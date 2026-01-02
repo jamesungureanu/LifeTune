@@ -3,19 +3,19 @@ import fs from "fs";
 import path from "path";
 
 export function serveStatic(app: Express) {
-  // dist/server → dist/public
-  const distPath = path.resolve(__dirname, "..", "public");
+  // Correct: dist/public
+  const distPath = path.resolve(__dirname, "public");
 
   if (!fs.existsSync(distPath)) {
     throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
+      `Could not find the build directory: ${distPath}. Did the client build run?`,
     );
   }
 
   app.use(express.static(distPath));
 
-  // SPA fallback (for routes like /game)
-  app.use("*", (_req, res) => {
+  // SPA fallback
+  app.get("*", (_req, res) => {
     res.sendFile(path.join(distPath, "index.html"));
   });
 }
